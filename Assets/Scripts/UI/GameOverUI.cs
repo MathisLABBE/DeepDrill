@@ -58,12 +58,19 @@ public class GameOverUI : MonoBehaviour
 
     private void Update()
     {
-        if (_IsDisplayed || GameManager.Instance == null || !GameManager.Instance.IsGameOver)
+        if (GameManager.Instance == null || !GameManager.Instance.IsGameOver)
         {
             return;
         }
 
-        AfficherGameOver();
+        if (!_IsDisplayed)
+        {
+            AfficherGameOver();
+            return;
+        }
+
+        ActualiserBoutonReanimation();
+        ActualiserBoutonRecompenseDouble();
     }
 
     #endregion
@@ -85,6 +92,7 @@ public class GameOverUI : MonoBehaviour
         ActualiserAmeliorationAimant();
         ActualiserBoutonsAmeliorations();
         ActualiserBoutonReanimation();
+        ActualiserBoutonRecompenseDouble();
 
         _GameOverPanel.SetActive(true);
     }
@@ -217,10 +225,17 @@ public class GameOverUI : MonoBehaviour
 
     public void RecupererRecompenseDouble()
     {
-        if (AdsManager.Instance == null)
+        if (AdsManager.Instance == null || GameManager.Instance == null)
         {
             return;
         }
+
+        if (!AdsManager.Instance.IsRewardedReady || GameManager.Instance.IsRewardClaimed)
+        {
+            return;
+        }
+
+        _DoubleClaimButton.interactable = false;
 
         AdsManager.Instance.AfficherPubRecompensee(AccorderRecompenseDouble);
     }
@@ -251,6 +266,18 @@ public class GameOverUI : MonoBehaviour
 
         _ClaimButton.interactable = false;
         _DoubleClaimButton.interactable = false;
+    }
+
+    private void ActualiserBoutonRecompenseDouble()
+    {
+        if (_DoubleClaimButton == null || GameManager.Instance == null)
+        {
+            return;
+        }
+
+        bool lPubDisponible = AdsManager.Instance != null && AdsManager.Instance.IsRewardedReady;
+
+        _DoubleClaimButton.interactable = !GameManager.Instance.IsRewardClaimed && lPubDisponible;
     }
 
     #endregion

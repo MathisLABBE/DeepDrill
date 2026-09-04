@@ -37,6 +37,8 @@ public class MainMenuUI : MonoBehaviour
 
     private void Start()
     {
+        Application.targetFrameRate = 120;
+
         AfficherPieces();
     }
 

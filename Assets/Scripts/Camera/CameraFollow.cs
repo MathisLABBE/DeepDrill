@@ -10,6 +10,9 @@ public class CameraFollow : MonoBehaviour
     [SerializeField]
     private float _VerticalOffset = -2f;
 
+    [SerializeField]
+    private float _WorldWidth = 6f;
+
     #endregion
 
 
@@ -26,6 +29,30 @@ public class CameraFollow : MonoBehaviour
         lNouvellePosition.y = _Target.position.y + _VerticalOffset;
 
         transform.position = lNouvellePosition;
+    }
+
+    private void Start()
+    {
+        AdapterCameraALaLargeur();
+    }
+
+    #endregion
+
+
+    #region [Affichage]
+
+    private void AdapterCameraALaLargeur()
+    {
+        Camera lCamera = GetComponent<Camera>();
+
+        if (lCamera == null || !lCamera.orthographic)
+        {
+            return;
+        }
+
+        float lHalfWidth = _WorldWidth / 2f;
+
+        lCamera.orthographicSize = lHalfWidth / lCamera.aspect;
     }
 
     #endregion
