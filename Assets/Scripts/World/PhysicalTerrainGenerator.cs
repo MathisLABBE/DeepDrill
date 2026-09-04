@@ -8,16 +8,28 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     private GameObject _DrillableElementPrefab;
 
     [SerializeField]
+    private Transform _Drill;
+
+    [SerializeField]
     private int _Columns = 24;
 
     [SerializeField]
-    private int _Rows = 40;
+    private int _RowsAhead = 40;
 
     [SerializeField]
     private float _ElementSize = 0.25f;
 
     [SerializeField]
     private float _StartY = -2f;
+
+    [SerializeField]
+    private float _CleanupDistance = 8f;
+
+    [SerializeField]
+    private float _CleanupInterval = 0.5f;
+
+    private float _NextRowY;
+    private float _CleanupTimer;
 
     #endregion
 
@@ -26,7 +38,23 @@ public class PhysicalTerrainGenerator : MonoBehaviour
 
     private void Start()
     {
+        _NextRowY = _StartY;
+
+        for (int lRow = 0; lRow < _RowsAhead; lRow++)
+        {
+            GenererLigne();
+        }
+    }
+
+    private void Update()
+    {
+        if (_Drill == null)
+        {
+            return;
+        }
+
         GenererTerrain();
+        MettreAJourNettoyage();
     }
 
     #endregion
@@ -36,6 +64,16 @@ public class PhysicalTerrainGenerator : MonoBehaviour
 
     private void GenererTerrain()
     {
+        float lGenerationLimit = _Drill.position.y - (_RowsAhead * _ElementSize);
+
+        while (lGenerationLimit < _NextRowY)
+        {
+            GenererLigne();
+        }
+    }
+
+    private void GenererLigne()
+    {
         if (_DrillableElementPrefab == null)
         {
             return;
@@ -44,17 +82,50 @@ public class PhysicalTerrainGenerator : MonoBehaviour
         float lTerrainWidth = _Columns * _ElementSize;
         float lStartX = -(lTerrainWidth / 2f) + (_ElementSize / 2f);
 
-        for (int lRow = 0; lRow < _Rows; lRow++)
+        for (int lColumn = 0; lColumn < _Columns; lColumn++)
         {
-            for (int lColumn = 0; lColumn < _Columns; lColumn++)
+            float lX = lStartX + (lColumn * _ElementSize);
+            Vector3 lPosition = new Vector3(lX, _NextRowY, 0f);
+
+            Instantiate(_DrillableElementPrefab, lPosition, Quaternion.identity, transform);
+        }
+
+        _NextRowY -= _ElementSize;
+    }
+
+    #endregion
+
+
+    #region [Nettoyage]
+
+    private void MettreAJourNettoyage()
+    {
+        _CleanupTimer += Time.deltaTime;
+
+        if (_CleanupTimer < _CleanupInterval)
+        {
+            return;
+        }
+
+        _CleanupTimer = 0f;
+
+        NettoyerTerrain();
+    }
+
+    private void NettoyerTerrain()
+    {
+        float lCleanupLimit = _Drill.position.y + _CleanupDistance;
+
+        for (int lIndex = transform.childCount - 1; lIndex >= 0; lIndex--)
+        {
+            Transform lElement = transform.GetChild(lIndex);
+
+            if (lElement.position.y <= lCleanupLimit)
             {
-                float lX = lStartX + (lColumn * _ElementSize);
-                float lY = _StartY - (lRow * _ElementSize);
-
-                Vector3 lPosition = new Vector3(lX, lY, 0f);
-
-                Instantiate(_DrillableElementPrefab, lPosition, Quaternion.identity, transform);
+                continue;
             }
+
+            Destroy(lElement.gameObject);
         }
     }
 
