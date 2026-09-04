@@ -5,7 +5,21 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     #region [Champs]
 
     [SerializeField]
-    private GameObject _DrillableElementPrefab;
+    private GameObject _NormalElementPrefab;
+
+    [SerializeField]
+    private GameObject _OreElementPrefab;
+
+    [SerializeField]
+    private GameObject _IndestructibleElementPrefab;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float _OreChance = 0.15f;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float _IndestructibleChance = 0.05f;
 
     [SerializeField]
     private Transform _Drill;
@@ -74,7 +88,7 @@ public class PhysicalTerrainGenerator : MonoBehaviour
 
     private void GenererLigne()
     {
-        if (_DrillableElementPrefab == null)
+        if (_NormalElementPrefab == null)
         {
             return;
         }
@@ -87,10 +101,31 @@ public class PhysicalTerrainGenerator : MonoBehaviour
             float lX = lStartX + (lColumn * _ElementSize);
             Vector3 lPosition = new Vector3(lX, _NextRowY, 0f);
 
-            Instantiate(_DrillableElementPrefab, lPosition, Quaternion.identity, transform);
+            GameObject lPrefab = ChoisirElement();
+
+            Instantiate(lPrefab, lPosition, Quaternion.identity, transform);
         }
 
         _NextRowY -= _ElementSize;
+    }
+
+    private GameObject ChoisirElement()
+    {
+        float lRandom = Random.value;
+
+        if (_IndestructibleElementPrefab != null &&
+            lRandom < _IndestructibleChance)
+        {
+            return _IndestructibleElementPrefab;
+        }
+
+        if (_OreElementPrefab != null &&
+            lRandom < _IndestructibleChance + _OreChance)
+        {
+            return _OreElementPrefab;
+        }
+
+        return _NormalElementPrefab;
     }
 
     #endregion

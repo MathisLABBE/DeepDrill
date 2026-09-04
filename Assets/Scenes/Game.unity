@@ -8093,64 +8093,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1263744439}
   m_CullTransparentMesh: 1
---- !u!1 &1318425218
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1318425220}
-  - component: {fileID: 1318425219}
-  m_Layer: 0
-  m_Name: MineGenerator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1318425219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1318425218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9eb41c320e3630145b44902083a33b7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChunkGenerator
-  _NormalBlockPrefab: {fileID: 7860682953094264037, guid: f75e48fd8aa777343b72f06e61103e6e, type: 3}
-  _OreBlockPrefab: {fileID: 7860682953094264037, guid: f416635e3ab95eb4085954dbfd3bf1dd, type: 3}
-  _IndestructibleBlockPrefab: {fileID: 7860682953094264037, guid: eb34f44436628ac4582767c4d7ea6ae2, type: 3}
-  _Drill: {fileID: 401091620}
-  _Columns: 6
-  _RowsAhead: 25
-  _BlockSize: 1
-  _StartY: -3
-  _OreChance: 0.15
-  _IndestructibleChance: 0.1
-  _CleanupDistance: 12
-  _CleanupInterval: 1
-  _IndestructibleChancePer100Meters: 0.15
-  _MaxIndestructibleChance: 0.35
---- !u!4 &1318425220
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1318425218}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1334981305
 GameObject:
   m_ObjectHideFlags: 0
@@ -8720,7 +8662,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db3ce73e49bac364590c065e9f156459, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PhysicalTerrainGenerator
-  _DrillableElementPrefab: {fileID: 6243262706000254500, guid: 993436c0e5a8153459128328f28e5861, type: 3}
+  _NormalElementPrefab: {fileID: 6243262706000254500, guid: 993436c0e5a8153459128328f28e5861, type: 3}
+  _OreElementPrefab: {fileID: 6243262706000254500, guid: f6b4e8b51bb6bf940a129c293b58d47d, type: 3}
+  _IndestructibleElementPrefab: {fileID: 6243262706000254500, guid: 03cc84ea13eecb043b4e95ad3445ddde, type: 3}
+  _OreChance: 0.15
+  _IndestructibleChance: 0.05
   _Drill: {fileID: 401091620}
   _Columns: 24
   _RowsAhead: 40
@@ -9856,7 +9802,6 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 401091620}
-  - {fileID: 1318425220}
   - {fileID: 1799193597}
   - {fileID: 2042704507}
   - {fileID: 551424690}

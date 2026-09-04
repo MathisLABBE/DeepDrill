@@ -127,7 +127,7 @@ public class DrillController : MonoBehaviour
             return;
         }
 
-        lElement.Forer(_DrillPower, Time.fixedDeltaTime);
+        lElement.Forer(this, _DrillPower, Time.fixedDeltaTime);
     }
 
     #endregion
@@ -250,6 +250,14 @@ public class DrillController : MonoBehaviour
 
         foreach (Collider2D lCollider in lColliders)
         {
+            DrillableElement lElement = lCollider.GetComponent<DrillableElement>();
+
+            if (lElement != null)
+            {
+                lElement.CollecterParAimant(this);
+                continue;
+            }
+
             Block lBloc = lCollider.GetComponent<Block>();
 
             if (lBloc == null)
