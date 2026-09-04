@@ -18,6 +18,12 @@ public class DrillController : MonoBehaviour
     [SerializeField]
     private float _TargetStopDistance = 0.15f;
 
+    [SerializeField]
+    private float _RotationSpeed = 360f;
+
+    [SerializeField]
+    private float _RotationOffset = 90f;
+
     private Rigidbody2D _Rb;
     private Vector2 _MovementDirection;
     private bool _HasMovementInput;
@@ -96,6 +102,11 @@ public class DrillController : MonoBehaviour
         if (_HasMovementInput)
         {
             _Rb.AddForce(_MovementDirection * _MovementForce, ForceMode2D.Force);
+
+            float lAngleCible = Mathf.Atan2(_MovementDirection.y, _MovementDirection.x) * Mathf.Rad2Deg + _RotationOffset;
+            float lNouvelAngle = Mathf.MoveTowardsAngle(_Rb.rotation, lAngleCible, _RotationSpeed * Time.fixedDeltaTime);
+
+            _Rb.MoveRotation(lNouvelAngle);
         }
 
         if (_Rb.linearVelocity.sqrMagnitude > _MaxSpeed * _MaxSpeed)
