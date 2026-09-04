@@ -29,6 +29,9 @@ public class DrillController : MonoBehaviour
     private bool _HasMovementInput;
 
     [SerializeField]
+    private float _DrillPower = 1f;
+
+    [SerializeField]
     private float _MagnetRadiusPerLevel = 0.75f;
 
     [SerializeField]
@@ -113,6 +116,18 @@ public class DrillController : MonoBehaviour
         {
             _Rb.linearVelocity = _Rb.linearVelocity.normalized * _MaxSpeed;
         }
+    }
+
+    private void OnCollisionStay2D(Collision2D pCollision)
+    {
+        DrillableElement lElement = pCollision.gameObject.GetComponent<DrillableElement>();
+
+        if (lElement == null)
+        {
+            return;
+        }
+
+        lElement.Forer(_DrillPower, Time.fixedDeltaTime);
     }
 
     #endregion
