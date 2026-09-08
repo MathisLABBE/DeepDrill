@@ -29,7 +29,12 @@ public class DrillController : MonoBehaviour
     private bool _HasMovementInput;
 
     [SerializeField]
-    private float _DrillPower = 1f;
+    private float _BaseDrillPower = 1f;
+
+    [SerializeField]
+    private float _DrillPowerPerLevel = 0.25f;
+
+    private float _DrillPower;
 
     [SerializeField]
     private float _MagnetRadiusPerLevel = 0.75f;
@@ -69,13 +74,16 @@ public class DrillController : MonoBehaviour
     private void Start()
     {
         int lMagnetLevel = 0;
+        int lDrillLevel = 0;
 
         if (UpgradeManager.Instance != null)
         {
             lMagnetLevel = UpgradeManager.Instance.MagnetLevel;
+            lDrillLevel = UpgradeManager.Instance.DrillLevel;
         }
 
         _MagnetRadius = lMagnetLevel * _MagnetRadiusPerLevel;
+        _DrillPower = _BaseDrillPower + (lDrillLevel * _DrillPowerPerLevel);
     }
 
     private void Update()
