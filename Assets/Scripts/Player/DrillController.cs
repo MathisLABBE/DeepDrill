@@ -46,6 +46,11 @@ public class DrillController : MonoBehaviour
     private float _MagnetTimer;
 
     [SerializeField]
+    private float _SizePerLevel = 0.1f;
+
+    private Vector3 _BaseScale;
+
+    [SerializeField]
     private ParticleSystem _DrillParticles;
 
     [SerializeField]
@@ -69,21 +74,29 @@ public class DrillController : MonoBehaviour
     {
         _Rb = GetComponent<Rigidbody2D>();
         _Rb.linearDamping = _MovementDamping;
+
+        _BaseScale = transform.localScale;
     }
 
     private void Start()
     {
         int lMagnetLevel = 0;
         int lDrillLevel = 0;
+        int lDrillSizeLevel = 0;
 
         if (UpgradeManager.Instance != null)
         {
             lMagnetLevel = UpgradeManager.Instance.MagnetLevel;
             lDrillLevel = UpgradeManager.Instance.DrillLevel;
+            lDrillSizeLevel = UpgradeManager.Instance.DrillSizeLevel;
         }
 
         _MagnetRadius = lMagnetLevel * _MagnetRadiusPerLevel;
         _DrillPower = _BaseDrillPower + (lDrillLevel * _DrillPowerPerLevel);
+
+        float lSizeMultiplier = 1f + (lDrillSizeLevel * _SizePerLevel);
+
+        transform.localScale = _BaseScale * lSizeMultiplier;
     }
 
     private void Update()
