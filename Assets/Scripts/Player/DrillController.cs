@@ -7,15 +7,34 @@ public class DrillController : MonoBehaviour
     #region [Champs]
 
     [SerializeField]
-    private float _HorizontalSpeed = 8f;
+    private float _MovementForce = 30f;
 
     [SerializeField]
-    private float _DescentSpeed = 2f;
+    private float _MaxSpeed = 5f;
 
     [SerializeField]
-    private float _DescentSpeedPerLevel = 0.3f;
+    private float _MovementDamping = 4f;
 
-    private float _CurrentDescentSpeed;
+    [SerializeField]
+    private float _TargetStopDistance = 0.15f;
+
+    [SerializeField]
+    private float _RotationSpeed = 360f;
+
+    [SerializeField]
+    private float _RotationOffset = 90f;
+
+    private Rigidbody2D _Rb;
+    private Vector2 _MovementDirection;
+    private bool _HasMovementInput;
+
+    [SerializeField]
+    private float _BaseDrillPower = 1f;
+
+    [SerializeField]
+    private float _DrillPowerPerLevel = 0.25f;
+
+    private float _DrillPower;
 
     [SerializeField]
     private float _MagnetRadiusPerLevel = 0.75f;
@@ -27,13 +46,9 @@ public class DrillController : MonoBehaviour
     private float _MagnetTimer;
 
     [SerializeField]
-    private float _MinX = -2.5f;
+    private float _SizePerLevel = 0.1f;
 
-    [SerializeField]
-    private float _MaxX = 2.5f;
-
-    private Rigidbody2D _Rb;
-    private float _TargetX;
+    private Vector3 _BaseScale;
 
     [SerializeField]
     private ParticleSystem _DrillParticles;
@@ -58,22 +73,30 @@ public class DrillController : MonoBehaviour
     private void Awake()
     {
         _Rb = GetComponent<Rigidbody2D>();
-        _TargetX = _Rb.position.x;
+        _Rb.linearDamping = _MovementDamping;
+
+        _BaseScale = transform.localScale;
     }
 
     private void Start()
     {
-        int lDrillLevel = 0;
         int lMagnetLevel = 0;
+        int lDrillLevel = 0;
+        int lDrillSizeLevel = 0;
 
         if (UpgradeManager.Instance != null)
         {
-            lDrillLevel = UpgradeManager.Instance.DrillLevel;
             lMagnetLevel = UpgradeManager.Instance.MagnetLevel;
+            lDrillLevel = UpgradeManager.Instance.DrillLevel;
+            lDrillSizeLevel = UpgradeManager.Instance.DrillSizeLevel;
         }
 
-        _CurrentDescentSpeed = _DescentSpeed + (lDrillLevel * _DescentSpeedPerLevel);
         _MagnetRadius = lMagnetLevel * _MagnetRadiusPerLevel;
+        _DrillPower = _BaseDrillPower + (lDrillLevel * _DrillPowerPerLevel);
+
+        float lSizeMultiplier = 1f + (lDrillSizeLevel * _SizePerLevel);
+
+        transform.localScale = _BaseScale * lSizeMultiplier;
     }
 
     private void Update()
@@ -82,6 +105,9 @@ public class DrillController : MonoBehaviour
         {
             return;
         }
+
+        _MovementDirection = Vector2.zero;
+        _HasMovementInput = false;
 
         LireSouris();
         LireClavier();
@@ -93,15 +119,36 @@ public class DrillController : MonoBehaviour
     {
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
         {
+            _Rb.linearVelocity = Vector2.zero;
             return;
         }
 
-        Vector2 lNouvellePosition = _Rb.position;
+        if (_HasMovementInput)
+        {
+            _Rb.AddForce(_MovementDirection * _MovementForce, ForceMode2D.Force);
 
-        lNouvellePosition.y -= _CurrentDescentSpeed * Time.fixedDeltaTime;
-        lNouvellePosition.x = Mathf.MoveTowards(lNouvellePosition.x, _TargetX, _HorizontalSpeed * Time.fixedDeltaTime);
+            float lAngleCible = Mathf.Atan2(_MovementDirection.y, _MovementDirection.x) * Mathf.Rad2Deg + _RotationOffset;
+            float lNouvelAngle = Mathf.MoveTowardsAngle(_Rb.rotation, lAngleCible, _RotationSpeed * Time.fixedDeltaTime);
 
-        _Rb.MovePosition(lNouvellePosition);
+            _Rb.MoveRotation(lNouvelAngle);
+        }
+
+        if (_Rb.linearVelocity.sqrMagnitude > _MaxSpeed * _MaxSpeed)
+        {
+            _Rb.linearVelocity = _Rb.linearVelocity.normalized * _MaxSpeed;
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D pCollision)
+    {
+        DrillableElement lElement = pCollision.gameObject.GetComponent<DrillableElement>();
+
+        if (lElement == null)
+        {
+            return;
+        }
+
+        lElement.Forer(this, _DrillPower, Time.fixedDeltaTime);
     }
 
     #endregion
@@ -111,20 +158,14 @@ public class DrillController : MonoBehaviour
 
     private void LireSouris()
     {
-        if (Mouse.current == null)
-        {
-            return;
-        }
-
-        if (!Mouse.current.leftButton.isPressed)
+        if (Mouse.current == null || !Mouse.current.leftButton.isPressed)
         {
             return;
         }
 
         Vector2 lPositionSouris = Mouse.current.position.ReadValue();
-        Vector3 lPositionMonde = Camera.main.ScreenToWorldPoint(lPositionSouris);
 
-        _TargetX = Mathf.Clamp(lPositionMonde.x, _MinX, _MaxX);
+        DefinirDirectionVersPositionEcran(lPositionSouris);
     }
 
     private void LireClavier()
@@ -134,38 +175,75 @@ public class DrillController : MonoBehaviour
             return;
         }
 
-        float lDirection = 0f;
+        Vector2 lDirection = Vector2.zero;
 
-        if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed)
+        if (Keyboard.current.aKey.isPressed ||
+            Keyboard.current.qKey.isPressed ||
+            Keyboard.current.leftArrowKey.isPressed)
         {
-            lDirection = -1f;
+            lDirection.x -= 1f;
         }
 
-        if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed)
+        if (Keyboard.current.dKey.isPressed ||
+            Keyboard.current.rightArrowKey.isPressed)
         {
-            lDirection = 1f;
+            lDirection.x += 1f;
         }
 
-        _TargetX += lDirection * _HorizontalSpeed * Time.deltaTime;
-        _TargetX = Mathf.Clamp(_TargetX, _MinX, _MaxX);
-    }
+        if (Keyboard.current.wKey.isPressed ||
+            Keyboard.current.zKey.isPressed ||
+            Keyboard.current.upArrowKey.isPressed)
+        {
+            lDirection.y += 1f;
+        }
 
-    private void LireTactile()
-    {
-        if (Touchscreen.current == null)
+        if (Keyboard.current.sKey.isPressed ||
+            Keyboard.current.downArrowKey.isPressed)
+        {
+            lDirection.y -= 1f;
+        }
+
+        if (lDirection == Vector2.zero)
         {
             return;
         }
 
-        if (!Touchscreen.current.primaryTouch.press.isPressed)
+        _MovementDirection = lDirection.normalized;
+        _HasMovementInput = true;
+    }
+
+    private void LireTactile()
+    {
+        if (Touchscreen.current == null ||
+            !Touchscreen.current.primaryTouch.press.isPressed)
         {
             return;
         }
 
         Vector2 lPositionTouch = Touchscreen.current.primaryTouch.position.ReadValue();
-        Vector3 lPositionMonde = Camera.main.ScreenToWorldPoint(lPositionTouch);
 
-        _TargetX = Mathf.Clamp(lPositionMonde.x, _MinX, _MaxX);
+        DefinirDirectionVersPositionEcran(lPositionTouch);
+    }
+
+    private void DefinirDirectionVersPositionEcran(Vector2 pPositionEcran)
+    {
+        Camera lCamera = Camera.main;
+
+        if (lCamera == null)
+        {
+            return;
+        }
+
+        Vector3 lPositionMonde = lCamera.ScreenToWorldPoint(pPositionEcran);
+        Vector2 lDirection = (Vector2)lPositionMonde - _Rb.position;
+
+        if (lDirection.magnitude <= _TargetStopDistance)
+        {
+            return;
+        }
+
+        _MovementDirection = lDirection.normalized;
+        _HasMovementInput = true;
     }
 
     #endregion
@@ -193,6 +271,14 @@ public class DrillController : MonoBehaviour
 
         foreach (Collider2D lCollider in lColliders)
         {
+            DrillableElement lElement = lCollider.GetComponent<DrillableElement>();
+
+            if (lElement != null)
+            {
+                lElement.CollecterParAimant(this);
+                continue;
+            }
+
             Block lBloc = lCollider.GetComponent<Block>();
 
             if (lBloc == null)

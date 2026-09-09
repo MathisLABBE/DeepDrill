@@ -41,6 +41,12 @@ public class GameOverUI : MonoBehaviour
     private Button _MagnetUpgradeButton;
 
     [SerializeField]
+    private TMP_Text _DrillSizeUpgradeText;
+
+    [SerializeField]
+    private Button _DrillSizeUpgradeButton;
+
+    [SerializeField]
     private Button _ClaimButton;
 
     [SerializeField]
@@ -93,6 +99,7 @@ public class GameOverUI : MonoBehaviour
         ActualiserBoutonsAmeliorations();
         ActualiserBoutonReanimation();
         ActualiserBoutonRecompenseDouble();
+        ActualiserAmeliorationTailleForeuse();
 
         _GameOverPanel.SetActive(true);
     }
@@ -211,6 +218,27 @@ public class GameOverUI : MonoBehaviour
         _EnergyUpgradeButton.interactable = lCoins >= UpgradeManager.Instance.EnergyCost;
         _DrillUpgradeButton.interactable = lCoins >= UpgradeManager.Instance.DrillCost;
         _MagnetUpgradeButton.interactable = lCoins >= UpgradeManager.Instance.MagnetCost;
+        _DrillSizeUpgradeButton.interactable = lCoins >= UpgradeManager.Instance.DrillSizeCost;
+    }
+
+    public void AcheterTailleForeuse()
+    {
+        if (UpgradeManager.Instance == null)
+        {
+            return;
+        }
+
+        UpgradeManager.Instance.AcheterTailleForeuse();
+
+        ActualiserAmeliorationTailleForeuse();
+        ActualiserPieces();
+        ActualiserBoutonsAmeliorations();
+    }
+
+    private void ActualiserAmeliorationTailleForeuse()
+    {
+        _DrillSizeUpgradeText.text =
+            $"Taille niveau {UpgradeManager.Instance.DrillSizeLevel}\nCoût : {UpgradeManager.Instance.DrillSizeCost} pièces";
     }
 
     #endregion

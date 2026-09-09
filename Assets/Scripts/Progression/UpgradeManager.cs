@@ -4,17 +4,21 @@ public class UpgradeManager : MonoBehaviour
 {
     #region [Champs]
 
+    // EnergyLevel
     private const string _EnergyLevelKey = "EnergyLevel";
-
     private int _EnergyLevel;
 
+    // DrillLevel
     private const string _DrillLevelKey = "DrillLevel";
-
     private int _DrillLevel;
 
+    // MagnetLevel
     private const string _MagnetLevelKey = "MagnetLevel";
-
     private int _MagnetLevel;
+
+    // DrillSizeLevel
+    private const string _DrillSizeLevelKey = "DrillSizeLevel";
+    private int _DrillSizeLevel;
 
     #endregion
 
@@ -34,6 +38,10 @@ public class UpgradeManager : MonoBehaviour
     public int MagnetLevel => _MagnetLevel;
 
     public int MagnetCost => 20 + (_MagnetLevel * 20);
+
+    public int DrillSizeLevel => _DrillSizeLevel;
+
+    public int DrillSizeCost => 25 + (_DrillSizeLevel * 25);
 
     #endregion
 
@@ -71,6 +79,7 @@ public class UpgradeManager : MonoBehaviour
         _EnergyLevel = PlayerPrefs.GetInt(_EnergyLevelKey, 0);
         _DrillLevel = PlayerPrefs.GetInt(_DrillLevelKey, 0);
         _MagnetLevel = PlayerPrefs.GetInt(_MagnetLevelKey, 0);
+        _DrillSizeLevel = PlayerPrefs.GetInt(_DrillSizeLevelKey, 0);
     }
 
     private void Sauvegarder()
@@ -78,6 +87,7 @@ public class UpgradeManager : MonoBehaviour
         PlayerPrefs.SetInt(_EnergyLevelKey, _EnergyLevel);
         PlayerPrefs.SetInt(_DrillLevelKey, _DrillLevel);
         PlayerPrefs.SetInt(_MagnetLevelKey, _MagnetLevel);
+        PlayerPrefs.SetInt(_DrillSizeLevelKey, _DrillSizeLevel);
 
         PlayerPrefs.Save();
     }
@@ -157,6 +167,30 @@ public class UpgradeManager : MonoBehaviour
     #endregion
 
 
+    #region [Taille de foreuse]
+
+    public bool AcheterTailleForeuse()
+    {
+        if (SaveManager.Instance == null)
+        {
+            return false;
+        }
+
+        if (!SaveManager.Instance.DepenserPieces(DrillSizeCost))
+        {
+            return false;
+        }
+
+        _DrillSizeLevel++;
+
+        Sauvegarder();
+
+        return true;
+    }
+
+    #endregion
+
+
     #region [Débogage]
 
     [ContextMenu("Réinitialiser les améliorations")]
@@ -165,13 +199,25 @@ public class UpgradeManager : MonoBehaviour
         _EnergyLevel = 0;
         _DrillLevel = 0;
         _MagnetLevel = 0;
+        _DrillSizeLevel = 0;
 
         PlayerPrefs.DeleteKey(_EnergyLevelKey);
         PlayerPrefs.DeleteKey(_DrillLevelKey);
         PlayerPrefs.DeleteKey(_MagnetLevelKey);
+        PlayerPrefs.DeleteKey(_DrillSizeLevelKey);
         PlayerPrefs.Save();
 
         Debug.Log("Améliorations réinitialisées.");
+    }
+
+    [ContextMenu("Ajouter un niveau de taille de foreuse")]
+    private void AjouterNiveauTailleForeuse()
+    {
+        _DrillSizeLevel++;
+
+        Sauvegarder();
+
+        Debug.Log($"Niveau taille de foreuse : {_DrillSizeLevel}");
     }
 
     #endregion
