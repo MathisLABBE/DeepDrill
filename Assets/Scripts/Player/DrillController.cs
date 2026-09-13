@@ -139,18 +139,6 @@ public class DrillController : MonoBehaviour
         }
     }
 
-    private void OnCollisionStay2D(Collision2D pCollision)
-    {
-        DrillableElement lElement = pCollision.gameObject.GetComponent<DrillableElement>();
-
-        if (lElement == null)
-        {
-            return;
-        }
-
-        lElement.Forer(this, _DrillPower, Time.fixedDeltaTime);
-    }
-
     #endregion
 
 
@@ -326,6 +314,21 @@ public class DrillController : MonoBehaviour
         }
 
         Handheld.Vibrate();
+    }
+
+    #endregion
+
+
+    #region [Forage]
+
+    public void ForerElement(DrillableElement pElement, float pDeltaTime)
+    {
+        if (pElement == null)
+        {
+            return;
+        }
+
+        pElement.Forer(this, _DrillPower, pDeltaTime);
     }
 
     #endregion
