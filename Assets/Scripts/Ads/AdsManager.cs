@@ -401,9 +401,15 @@ public class AdsManager : MonoBehaviour
         _InterstitialAd.LoadAd();
     }
 
-    public void TerminerRunEtAfficherInterstitialSiNecessaire(Action pOnComplete)
+    public void TerminerRunEtAfficherInterstitialSiNecessaire(Action pOnComplete, bool pAutoriserInterstitial = true)
     {
         _RunsSinceInterstitial++;
+
+        if (!pAutoriserInterstitial)
+        {
+            pOnComplete?.Invoke();
+            return;
+        }
 
         if (_RunsSinceInterstitial < _RunsPerInterstitial)
         {

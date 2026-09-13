@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,6 +10,12 @@ public class GameOverUI : MonoBehaviour
 
     [SerializeField]
     private GameObject _GameOverPanel;
+
+    [SerializeField]
+    private GameObject _RevivePanel;
+
+    [SerializeField]
+    private GameObject _RewardPanel;
 
     [SerializeField]
     private TMP_Text _DepthText;
@@ -66,40 +73,27 @@ public class GameOverUI : MonoBehaviour
 
         _DepthText.text = $"Profondeur : {RunManager.Instance.Depth} m";
         _OreText.text = $"Diamant : {RunManager.Instance.Ore}";
-        _CoinsEarnedText.text = $"Pièces à récupérer : {RunManager.Instance.Ore}";
+
+        int lPiecesARecuperer = RunManager.Instance.Ore * GameManager.Instance.CoinsPerDiamond;
+
+        _CoinsEarnedText.text = $"Pièces à récupérer : {lPiecesARecuperer}";
         _TotalCoinsText.text = $"Total pièces : {SaveManager.Instance.Coins}";
 
         ActualiserBoutonReanimation();
         ActualiserBoutonRecompenseDouble();
 
         _GameOverPanel.SetActive(true);
-    }
 
-    public void Rejouer()
-    {
-        if (AdsManager.Instance == null)
+        if (GameManager.Instance.CanRevive)
         {
-            ChargerPartie();
-            return;
+            _RevivePanel.SetActive(true);
+            _RewardPanel.SetActive(false);
         }
-
-        AdsManager.Instance.TerminerRunEtAfficherInterstitialSiNecessaire(ChargerPartie);
-    }
-
-    private void ChargerPartie()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void RetourMenu()
-    {
-        if (AdsManager.Instance == null)
+        else
         {
-            ChargerMenu();
-            return;
+            _RevivePanel.SetActive(false);
+            _RewardPanel.SetActive(true);
         }
-
-        AdsManager.Instance.TerminerRunEtAfficherInterstitialSiNecessaire(ChargerMenu);
     }
 
     private void ChargerMenu()
@@ -153,12 +147,18 @@ public class GameOverUI : MonoBehaviour
             return;
         }
 
-        _CoinsEarnedText.text = $"Pièces gagnées : {lPiecesGagnees}";
-
-        ActualiserPieces();
-
         _ClaimButton.interactable = false;
         _DoubleClaimButton.interactable = false;
+
+        if (AdsManager.Instance == null)
+        {
+            ChargerMenu();
+            return;
+        }
+
+        bool lAutoriserInterstitial = pMultiplicateur == 1;
+
+        AdsManager.Instance.TerminerRunEtAfficherInterstitialSiNecessaire(ChargerMenu, lAutoriserInterstitial);
     }
 
     private void ActualiserBoutonRecompenseDouble()
@@ -171,11 +171,6 @@ public class GameOverUI : MonoBehaviour
         bool lPubDisponible = AdsManager.Instance != null && AdsManager.Instance.IsRewardedReady;
 
         _DoubleClaimButton.interactable = !GameManager.Instance.IsRewardClaimed && lPubDisponible;
-    }
-
-    private void ActualiserPieces()
-    {
-        _TotalCoinsText.text = $"Total pièces : {SaveManager.Instance.Coins}";
     }
 
     #endregion
@@ -212,7 +207,10 @@ public class GameOverUI : MonoBehaviour
             return;
         }
 
+        _RevivePanel.SetActive(false);
+        _RewardPanel.SetActive(false);
         _GameOverPanel.SetActive(false);
+
         _IsDisplayed = false;
     }
 
@@ -226,6 +224,19 @@ public class GameOverUI : MonoBehaviour
         bool lPubDisponible = AdsManager.Instance != null && AdsManager.Instance.IsReviveReady;
 
         _ReviveButton.interactable = GameManager.Instance.CanRevive && lPubDisponible;
+    }
+
+    public void TerminerReanimation()
+    {
+        if (_RevivePanel != null)
+        {
+            _RevivePanel.SetActive(false);
+        }
+
+        if (_RewardPanel != null)
+        {
+            _RewardPanel.SetActive(true);
+        }
     }
 
     #endregion

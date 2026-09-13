@@ -21,6 +21,10 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private bool _VibrationsEnabled = true;
 
+    [SerializeField]
+    [Min(1)]
+    private int _CoinsPerDiamond = 1;
+
     #endregion
 
 
@@ -37,6 +41,8 @@ public class GameManager : MonoBehaviour
     public bool CanRevive => _IsGameOver && !_HasRevived && !_IsRewardClaimed;
 
     public bool IsInvulnerable => Time.time < _InvulnerableUntil;
+
+    public int CoinsPerDiamond => Mathf.Max(1, _CoinsPerDiamond);
 
     #endregion
 
@@ -115,7 +121,7 @@ public class GameManager : MonoBehaviour
         }
 
         int lMultiplicateur = Mathf.Max(1, pMultiplicateur);
-        int lPiecesGagnees = RunManager.Instance.Ore * lMultiplicateur;
+        int lPiecesGagnees = RunManager.Instance.Ore * CoinsPerDiamond * lMultiplicateur;
 
         SaveManager.Instance.AjouterPieces(lPiecesGagnees);
 
