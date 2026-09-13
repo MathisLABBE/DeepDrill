@@ -140,12 +140,7 @@ public class GameOverUI : MonoBehaviour
             return;
         }
 
-        int lPiecesGagnees = GameManager.Instance.RecupererRecompense(pMultiplicateur);
-
-        if (lPiecesGagnees <= 0)
-        {
-            return;
-        }
+        GameManager.Instance.RecupererRecompense(pMultiplicateur);
 
         _ClaimButton.interactable = false;
         _DoubleClaimButton.interactable = false;
