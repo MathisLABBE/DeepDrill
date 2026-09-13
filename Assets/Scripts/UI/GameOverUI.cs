@@ -23,30 +23,6 @@ public class GameOverUI : MonoBehaviour
     private TMP_Text _TotalCoinsText;
 
     [SerializeField]
-    private TMP_Text _EnergyUpgradeText;
-
-    [SerializeField]
-    private Button _EnergyUpgradeButton;
-
-    [SerializeField]
-    private TMP_Text _DrillUpgradeText;
-
-    [SerializeField]
-    private Button _DrillUpgradeButton;
-
-    [SerializeField]
-    private TMP_Text _MagnetUpgradeText;
-
-    [SerializeField]
-    private Button _MagnetUpgradeButton;
-
-    [SerializeField]
-    private TMP_Text _DrillSizeUpgradeText;
-
-    [SerializeField]
-    private Button _DrillSizeUpgradeButton;
-
-    [SerializeField]
     private Button _ClaimButton;
 
     [SerializeField]
@@ -93,13 +69,8 @@ public class GameOverUI : MonoBehaviour
         _CoinsEarnedText.text = $"Pièces à récupérer : {RunManager.Instance.Ore}";
         _TotalCoinsText.text = $"Total pièces : {SaveManager.Instance.Coins}";
 
-        ActualiserAmeliorationEnergie();
-        ActualiserAmeliorationForage();
-        ActualiserAmeliorationAimant();
-        ActualiserBoutonsAmeliorations();
         ActualiserBoutonReanimation();
         ActualiserBoutonRecompenseDouble();
-        ActualiserAmeliorationTailleForeuse();
 
         _GameOverPanel.SetActive(true);
     }
@@ -134,111 +105,6 @@ public class GameOverUI : MonoBehaviour
     private void ChargerMenu()
     {
         SceneManager.LoadScene("MainMenu");
-    }
-
-    #endregion
-
-
-    #region [Améliorations]
-
-    public void AcheterEnergie()
-    {
-        if (UpgradeManager.Instance == null)
-        {
-            return;
-        }
-
-        UpgradeManager.Instance.AcheterEnergie();
-
-        ActualiserAmeliorationEnergie();
-        ActualiserPieces();
-        ActualiserBoutonsAmeliorations();
-    }
-
-    private void ActualiserAmeliorationEnergie()
-    {
-        _EnergyUpgradeText.text =
-            $"Énergie niveau {UpgradeManager.Instance.EnergyLevel}\nCoût : {UpgradeManager.Instance.EnergyCost} pièces";
-    }
-
-    private void ActualiserPieces()
-    {
-        _TotalCoinsText.text = $"Total pièces : {SaveManager.Instance.Coins}";
-    }
-
-    public void AcheterForage()
-    {
-        if (UpgradeManager.Instance == null)
-        {
-            return;
-        }
-
-        UpgradeManager.Instance.AcheterForage();
-
-        ActualiserAmeliorationForage();
-        ActualiserPieces();
-        ActualiserBoutonsAmeliorations();
-    }
-
-    private void ActualiserAmeliorationForage()
-    {
-        _DrillUpgradeText.text =
-            $"Forage niveau {UpgradeManager.Instance.DrillLevel}\nCoût : {UpgradeManager.Instance.DrillCost} pièces";
-    }
-
-    public void AcheterAimant()
-    {
-        if (UpgradeManager.Instance == null)
-        {
-            return;
-        }
-
-        UpgradeManager.Instance.AcheterAimant();
-
-        ActualiserAmeliorationAimant();
-        ActualiserPieces();
-        ActualiserBoutonsAmeliorations();
-    }
-
-    private void ActualiserAmeliorationAimant()
-    {
-        _MagnetUpgradeText.text =
-            $"Aimant niveau {UpgradeManager.Instance.MagnetLevel}\nCoût : {UpgradeManager.Instance.MagnetCost} pièces";
-    }
-
-    private void ActualiserBoutonsAmeliorations()
-    {
-        if (SaveManager.Instance == null || UpgradeManager.Instance == null)
-        {
-            return;
-        }
-
-        int lCoins = SaveManager.Instance.Coins;
-
-        _EnergyUpgradeButton.interactable = lCoins >= UpgradeManager.Instance.EnergyCost;
-        _DrillUpgradeButton.interactable = lCoins >= UpgradeManager.Instance.DrillCost;
-        _MagnetUpgradeButton.interactable = lCoins >= UpgradeManager.Instance.MagnetCost;
-        _DrillSizeUpgradeButton.interactable = lCoins >= UpgradeManager.Instance.DrillSizeCost;
-    }
-
-    public void AcheterTailleForeuse()
-    {
-        if (UpgradeManager.Instance == null)
-        {
-            return;
-        }
-
-        UpgradeManager.Instance.AcheterTailleForeuse();
-
-        ActualiserAmeliorationTailleForeuse();
-        ActualiserPieces();
-        ActualiserBoutonsAmeliorations();
-    }
-
-    private void ActualiserAmeliorationTailleForeuse()
-    {
-        _DrillSizeUpgradeText.text =
-            $"Taille niveau {UpgradeManager.Instance.DrillSizeLevel}\nCoût : {UpgradeManager.Instance.DrillSizeCost} pièces";
     }
 
     #endregion
@@ -290,7 +156,6 @@ public class GameOverUI : MonoBehaviour
         _CoinsEarnedText.text = $"Pièces gagnées : {lPiecesGagnees}";
 
         ActualiserPieces();
-        ActualiserBoutonsAmeliorations();
 
         _ClaimButton.interactable = false;
         _DoubleClaimButton.interactable = false;
@@ -306,6 +171,11 @@ public class GameOverUI : MonoBehaviour
         bool lPubDisponible = AdsManager.Instance != null && AdsManager.Instance.IsRewardedReady;
 
         _DoubleClaimButton.interactable = !GameManager.Instance.IsRewardClaimed && lPubDisponible;
+    }
+
+    private void ActualiserPieces()
+    {
+        _TotalCoinsText.text = $"Total pièces : {SaveManager.Instance.Coins}";
     }
 
     #endregion
