@@ -17,8 +17,14 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     private GameObject _LavaPrefab;
 
     [SerializeField]
+    private float _OreVeinScale = 0.18f;
+
+    [SerializeField]
     [Range(0f, 1f)]
-    private float _OreChance = 0.15f;
+    private float _OreVeinThreshold = 0.72f;
+
+    private float _OreNoiseOffsetX;
+    private float _OreNoiseOffsetY;
 
     [SerializeField]
     [Range(0f, 1f)]
@@ -62,6 +68,9 @@ public class PhysicalTerrainGenerator : MonoBehaviour
 
     private void Start()
     {
+        _OreNoiseOffsetX = Random.Range(-10000f, 10000f);
+        _OreNoiseOffsetY = Random.Range(-10000f, 10000f);
+
         _NextRowY = _StartY;
 
         int lRows = Mathf.CeilToInt(_GenerationDepth / _ElementSize);
@@ -114,7 +123,7 @@ public class PhysicalTerrainGenerator : MonoBehaviour
             float lX = lStartX + (lColumn * _ElementSize);
             Vector3 lPosition = new Vector3(lX, _NextRowY, 0f);
 
-            TerrainElementType lType = ChoisirTypeElement();
+            TerrainElementType lType = ChoisirTypeElement(lPosition);
             GameObject lPrefab = ObtenirPrefab(lType);
 
             CreerElement(lPrefab, lPosition);
@@ -137,7 +146,7 @@ public class PhysicalTerrainGenerator : MonoBehaviour
         lElement.transform.localScale *= lScaleRatio;
     }
 
-    private TerrainElementType ChoisirTypeElement()
+    private TerrainElementType ChoisirTypeElement(Vector3 pPosition)
     {
         float lRandom = Random.value;
 
@@ -151,7 +160,14 @@ public class PhysicalTerrainGenerator : MonoBehaviour
             return TerrainElementType.Indestructible;
         }
 
-        if (_OreElementPrefab != null && lRandom < _LavaChance + _IndestructibleChance + _OreChance)
+        float lGridX = pPosition.x / _ElementSize;
+        float lGridY = pPosition.y / _ElementSize;
+
+        float lOreNoise = Mathf.PerlinNoise(
+            (lGridX * _OreVeinScale) + _OreNoiseOffsetX,
+            (lGridY * _OreVeinScale) + _OreNoiseOffsetY);
+
+        if (_OreElementPrefab != null && lOreNoise >= _OreVeinThreshold)
         {
             return TerrainElementType.Ore;
         }
