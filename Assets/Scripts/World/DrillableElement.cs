@@ -5,7 +5,7 @@ public class DrillableElement : MonoBehaviour
     #region [Champs]
 
     [SerializeField]
-    private BlockType _Type = BlockType.Normal;
+    private TerrainElementType _Type = TerrainElementType.Normal;
 
     [SerializeField]
     private float _Resistance = 1f;
@@ -23,7 +23,7 @@ public class DrillableElement : MonoBehaviour
 
     public void Forer(DrillController pDrill, float pDrillPower, float pDeltaTime)
     {
-        if (_Type == BlockType.Indestructible)
+        if (_Type == TerrainElementType.Indestructible)
         {
             return;
         }
@@ -35,7 +35,7 @@ public class DrillableElement : MonoBehaviour
             return;
         }
 
-        if (_Type == BlockType.Ore)
+        if (_Type == TerrainElementType.Ore)
         {
             CollecterMinerai();
 
@@ -73,7 +73,7 @@ public class DrillableElement : MonoBehaviour
 
     public void CollecterParAimant(DrillController pDrill)
     {
-        if (_Type != BlockType.Ore || _IsCollected)
+        if (_Type != TerrainElementType.Ore || _IsCollected)
         {
             return;
         }

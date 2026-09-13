@@ -114,7 +114,8 @@ public class PhysicalTerrainGenerator : MonoBehaviour
             float lX = lStartX + (lColumn * _ElementSize);
             Vector3 lPosition = new Vector3(lX, _NextRowY, 0f);
 
-            GameObject lPrefab = ChoisirElement();
+            TerrainElementType lType = ChoisirTypeElement();
+            GameObject lPrefab = ObtenirPrefab(lType);
 
             CreerElement(lPrefab, lPosition);
         }
@@ -136,29 +137,44 @@ public class PhysicalTerrainGenerator : MonoBehaviour
         lElement.transform.localScale *= lScaleRatio;
     }
 
-    private GameObject ChoisirElement()
+    private TerrainElementType ChoisirTypeElement()
     {
         float lRandom = Random.value;
 
-        if (_LavaPrefab != null &&
-            lRandom < _LavaChance)
+        if (_LavaPrefab != null && lRandom < _LavaChance)
         {
-            return _LavaPrefab;
+            return TerrainElementType.Lava;
         }
 
-        if (_IndestructibleElementPrefab != null &&
-            lRandom < _LavaChance + _IndestructibleChance)
+        if (_IndestructibleElementPrefab != null && lRandom < _LavaChance + _IndestructibleChance)
         {
-            return _IndestructibleElementPrefab;
+            return TerrainElementType.Indestructible;
         }
 
-        if (_OreElementPrefab != null &&
-            lRandom < _LavaChance + _IndestructibleChance + _OreChance)
+        if (_OreElementPrefab != null && lRandom < _LavaChance + _IndestructibleChance + _OreChance)
         {
-            return _OreElementPrefab;
+            return TerrainElementType.Ore;
         }
 
-        return _NormalElementPrefab;
+        return TerrainElementType.Normal;
+    }
+
+    private GameObject ObtenirPrefab(TerrainElementType pType)
+    {
+        switch (pType)
+        {
+            case TerrainElementType.Ore:
+                return _OreElementPrefab;
+
+            case TerrainElementType.Indestructible:
+                return _IndestructibleElementPrefab;
+
+            case TerrainElementType.Lava:
+                return _LavaPrefab;
+
+            default:
+                return _NormalElementPrefab;
+        }
     }
 
     #endregion

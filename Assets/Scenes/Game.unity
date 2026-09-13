@@ -7653,7 +7653,7 @@ MonoBehaviour:
   _Drill: {fileID: 401091620}
   _TerrainWidth: 6
   _GenerationDepth: 10
-  _ElementSize: 0.125
+  _ElementSize: 0.2
   _ReferenceElementSize: 0.25
   _StartY: -2
   _CleanupDistance: 8
