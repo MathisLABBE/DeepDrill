@@ -14,12 +14,19 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     private GameObject _IndestructibleElementPrefab;
 
     [SerializeField]
+    private GameObject _LavaPrefab;
+
+    [SerializeField]
     [Range(0f, 1f)]
     private float _OreChance = 0.15f;
 
     [SerializeField]
     [Range(0f, 1f)]
     private float _IndestructibleChance = 0.05f;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float _LavaChance = 0.02f;
 
     [SerializeField]
     private Transform _Drill;
@@ -113,14 +120,20 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     {
         float lRandom = Random.value;
 
+        if (_LavaPrefab != null &&
+            lRandom < _LavaChance)
+        {
+            return _LavaPrefab;
+        }
+
         if (_IndestructibleElementPrefab != null &&
-            lRandom < _IndestructibleChance)
+            lRandom < _LavaChance + _IndestructibleChance)
         {
             return _IndestructibleElementPrefab;
         }
 
         if (_OreElementPrefab != null &&
-            lRandom < _IndestructibleChance + _OreChance)
+            lRandom < _LavaChance + _IndestructibleChance + _OreChance)
         {
             return _OreElementPrefab;
         }
