@@ -261,20 +261,12 @@ public class DrillController : MonoBehaviour
         {
             DrillableElement lElement = lCollider.GetComponent<DrillableElement>();
 
-            if (lElement != null)
-            {
-                lElement.CollecterParAimant(this);
-                continue;
-            }
-
-            Block lBloc = lCollider.GetComponent<Block>();
-
-            if (lBloc == null)
+            if (lElement == null)
             {
                 continue;
             }
 
-            lBloc.CollecterParAimant(this);
+            lElement.CollecterParAimant(this);
         }
     }
 
