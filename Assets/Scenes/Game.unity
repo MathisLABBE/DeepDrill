@@ -7651,9 +7651,10 @@ MonoBehaviour:
   _IndestructibleChance: 0
   _LavaChance: 0.02
   _Drill: {fileID: 401091620}
-  _Columns: 24
-  _RowsAhead: 40
-  _ElementSize: 0.25
+  _TerrainWidth: 6
+  _GenerationDepth: 10
+  _ElementSize: 0.125
+  _ReferenceElementSize: 0.25
   _StartY: -2
   _CleanupDistance: 8
   _CleanupInterval: 0.5

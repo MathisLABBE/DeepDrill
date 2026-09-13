@@ -32,13 +32,16 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     private Transform _Drill;
 
     [SerializeField]
-    private int _Columns = 24;
+    private float _TerrainWidth = 6f;
 
     [SerializeField]
-    private int _RowsAhead = 40;
+    private float _GenerationDepth = 10f;
 
     [SerializeField]
     private float _ElementSize = 0.25f;
+
+    [SerializeField]
+    private float _ReferenceElementSize = 0.25f;
 
     [SerializeField]
     private float _StartY = -2f;
@@ -61,7 +64,9 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     {
         _NextRowY = _StartY;
 
-        for (int lRow = 0; lRow < _RowsAhead; lRow++)
+        int lRows = Mathf.CeilToInt(_GenerationDepth / _ElementSize);
+
+        for (int lRow = 0; lRow < lRows; lRow++)
         {
             GenererLigne();
         }
@@ -85,7 +90,7 @@ public class PhysicalTerrainGenerator : MonoBehaviour
 
     private void GenererTerrain()
     {
-        float lGenerationLimit = _Drill.position.y - (_RowsAhead * _ElementSize);
+        float lGenerationLimit = _Drill.position.y - _GenerationDepth;
 
         while (lGenerationLimit < _NextRowY)
         {
@@ -100,20 +105,35 @@ public class PhysicalTerrainGenerator : MonoBehaviour
             return;
         }
 
-        float lTerrainWidth = _Columns * _ElementSize;
+        int lColumns = Mathf.CeilToInt(_TerrainWidth / _ElementSize);
+        float lTerrainWidth = lColumns * _ElementSize;
         float lStartX = -(lTerrainWidth / 2f) + (_ElementSize / 2f);
 
-        for (int lColumn = 0; lColumn < _Columns; lColumn++)
+        for (int lColumn = 0; lColumn < lColumns; lColumn++)
         {
             float lX = lStartX + (lColumn * _ElementSize);
             Vector3 lPosition = new Vector3(lX, _NextRowY, 0f);
 
             GameObject lPrefab = ChoisirElement();
 
-            Instantiate(lPrefab, lPosition, Quaternion.identity, transform);
+            CreerElement(lPrefab, lPosition);
         }
 
         _NextRowY -= _ElementSize;
+    }
+
+    private void CreerElement(GameObject pPrefab, Vector3 pPosition)
+    {
+        if (pPrefab == null || _ReferenceElementSize <= 0f)
+        {
+            return;
+        }
+
+        GameObject lElement = Instantiate(pPrefab, pPosition, Quaternion.identity, transform);
+
+        float lScaleRatio = _ElementSize / _ReferenceElementSize;
+
+        lElement.transform.localScale *= lScaleRatio;
     }
 
     private GameObject ChoisirElement()
