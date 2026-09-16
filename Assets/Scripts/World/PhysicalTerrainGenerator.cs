@@ -8,7 +8,10 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     private GameObject _NormalElementPrefab;
 
     [SerializeField]
-    private GameObject _OreElementPrefab;
+    private GameObject _DiamondElementPrefab;
+
+    [SerializeField]
+    private GameObject _GoldElementPrefab;
 
     [SerializeField]
     private GameObject _IndestructibleElementPrefab;
@@ -17,14 +20,24 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     private GameObject _LavaPrefab;
 
     [SerializeField]
-    private float _OreVeinScale = 0.18f;
+    private float _DiamondVeinScale = 0.18f;
 
     [SerializeField]
     [Range(0f, 1f)]
-    private float _OreVeinThreshold = 0.72f;
+    private float _DiamondVeinThreshold = 0.72f;
 
-    private float _OreNoiseOffsetX;
-    private float _OreNoiseOffsetY;
+    private float _DiamondNoiseOffsetX;
+    private float _DiamondNoiseOffsetY;
+
+    [SerializeField]
+    private float _GoldVeinScale = 0.16f;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float _GoldVeinThreshold = 0.78f;
+
+    private float _GoldNoiseOffsetX;
+    private float _GoldNoiseOffsetY;
 
     [SerializeField]
     [Range(0f, 1f)]
@@ -68,8 +81,11 @@ public class PhysicalTerrainGenerator : MonoBehaviour
 
     private void Start()
     {
-        _OreNoiseOffsetX = Random.Range(-10000f, 10000f);
-        _OreNoiseOffsetY = Random.Range(-10000f, 10000f);
+        _DiamondNoiseOffsetX = Random.Range(-10000f, 10000f);
+        _DiamondNoiseOffsetY = Random.Range(-10000f, 10000f);
+
+        _GoldNoiseOffsetX = Random.Range(-10000f, 10000f);
+        _GoldNoiseOffsetY = Random.Range(-10000f, 10000f);
 
         _NextRowY = _StartY;
 
@@ -124,7 +140,7 @@ public class PhysicalTerrainGenerator : MonoBehaviour
             Vector3 lPosition = new Vector3(lX, _NextRowY, 0f);
 
             TerrainElementType lType = ChoisirTypeElement(lPosition);
-            GameObject lPrefab = ObtenirPrefab(lType);
+            GameObject lPrefab = ObtenirPrefab(lType, lPosition);
 
             CreerElement(lPrefab, lPosition);
         }
@@ -163,11 +179,18 @@ public class PhysicalTerrainGenerator : MonoBehaviour
         float lGridX = pPosition.x / _ElementSize;
         float lGridY = pPosition.y / _ElementSize;
 
-        float lOreNoise = Mathf.PerlinNoise(
-            (lGridX * _OreVeinScale) + _OreNoiseOffsetX,
-            (lGridY * _OreVeinScale) + _OreNoiseOffsetY);
+        float lDiamondNoise = Mathf.PerlinNoise(
+            (lGridX * _DiamondVeinScale) + _DiamondNoiseOffsetX,
+            (lGridY * _DiamondVeinScale) + _DiamondNoiseOffsetY);
 
-        if (_OreElementPrefab != null && lOreNoise >= _OreVeinThreshold)
+        float lGoldNoise = Mathf.PerlinNoise(
+            (lGridX * _GoldVeinScale) + _GoldNoiseOffsetX,
+            (lGridY * _GoldVeinScale) + _GoldNoiseOffsetY);
+
+        bool lIsDiamond = _DiamondElementPrefab != null && lDiamondNoise >= _DiamondVeinThreshold;
+        bool lIsGold = _GoldElementPrefab != null && lGoldNoise >= _GoldVeinThreshold;
+
+        if (lIsDiamond || lIsGold)
         {
             return TerrainElementType.Ore;
         }
@@ -175,12 +198,12 @@ public class PhysicalTerrainGenerator : MonoBehaviour
         return TerrainElementType.Normal;
     }
 
-    private GameObject ObtenirPrefab(TerrainElementType pType)
+    private GameObject ObtenirPrefab(TerrainElementType pType, Vector3 pPosition)
     {
         switch (pType)
         {
             case TerrainElementType.Ore:
-                return _OreElementPrefab;
+                return ObtenirPrefabMinerai(pPosition);
 
             case TerrainElementType.Indestructible:
                 return _IndestructibleElementPrefab;
@@ -191,6 +214,23 @@ public class PhysicalTerrainGenerator : MonoBehaviour
             default:
                 return _NormalElementPrefab;
         }
+    }
+
+    private GameObject ObtenirPrefabMinerai(Vector3 pPosition)
+    {
+        float lGridX = pPosition.x / _ElementSize;
+        float lGridY = pPosition.y / _ElementSize;
+
+        float lGoldNoise = Mathf.PerlinNoise(
+            (lGridX * _GoldVeinScale) + _GoldNoiseOffsetX,
+            (lGridY * _GoldVeinScale) + _GoldNoiseOffsetY);
+
+        if (_GoldElementPrefab != null && lGoldNoise >= _GoldVeinThreshold)
+        {
+            return _GoldElementPrefab;
+        }
+
+        return _DiamondElementPrefab;
     }
 
     #endregion

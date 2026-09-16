@@ -21,7 +21,8 @@ public class RunManager : MonoBehaviour
 
     private float _StartY;
     private float _Depth;
-    private int _Ore;
+    private int _Diamond;
+    private int _Gold;
 
     private float _Energy;
     private float _MaxEnergy;
@@ -35,7 +36,11 @@ public class RunManager : MonoBehaviour
 
     public int Depth => Mathf.FloorToInt(_Depth);
 
-    public int Ore => _Ore;
+    public int Diamond => _Diamond;
+
+    public int Gold => _Gold;
+
+    public int Ore => _Diamond;
 
     public float Energy => _Energy;
 
@@ -100,9 +105,25 @@ public class RunManager : MonoBehaviour
 
     public void AjouterMinerai(int pQuantite)
     {
-        _Ore += pQuantite;
+        _Diamond += pQuantite;
 
-        Debug.Log($"Minerai : {_Ore}");
+        Debug.Log($"Diamant  : {_Diamond}");
+    }
+
+    public void AjouterMinerai(MineralType pMineralType, int pQuantite)
+    {
+        switch (pMineralType)
+        {
+            case MineralType.Gold:
+                _Gold += pQuantite;
+                Debug.Log($"Or : {_Gold}");
+                break;
+
+            default:
+                _Diamond += pQuantite;
+                Debug.Log($"Diamant : {_Diamond}");
+                break;
+        }
     }
 
     #endregion

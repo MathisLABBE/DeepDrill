@@ -1090,7 +1090,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0.3921569, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -7644,10 +7644,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PhysicalTerrainGenerator
   _NormalElementPrefab: {fileID: 6243262706000254500, guid: 993436c0e5a8153459128328f28e5861, type: 3}
-  _OreElementPrefab: {fileID: 6243262706000254500, guid: f6b4e8b51bb6bf940a129c293b58d47d, type: 3}
+  _DiamondElementPrefab: {fileID: 6243262706000254500, guid: f6b4e8b51bb6bf940a129c293b58d47d, type: 3}
+  _GoldElementPrefab: {fileID: 6243262706000254500, guid: dadcdb14fe1bb354782986ea8fa009ad, type: 3}
   _IndestructibleElementPrefab: {fileID: 6243262706000254500, guid: 03cc84ea13eecb043b4e95ad3445ddde, type: 3}
   _LavaPrefab: {fileID: 703969965660939688, guid: 8bd621c4f5868824392fa0d4d519d35e, type: 3}
-  _OreChance: 0.15
+  _DiamondVeinScale: 0.18
+  _DiamondVeinThreshold: 0.72
+  _GoldVeinScale: 0.16
+  _GoldVeinThreshold: 0.78
   _IndestructibleChance: 0
   _LavaChance: 0.02
   _Drill: {fileID: 401091620}

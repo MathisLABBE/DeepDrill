@@ -8,6 +8,9 @@ public class DrillableElement : MonoBehaviour
     private TerrainElementType _Type = TerrainElementType.Normal;
 
     [SerializeField]
+    private MineralType _MineralType = MineralType.Diamond;
+
+    [SerializeField]
     private float _Resistance = 1f;
 
     [SerializeField]
@@ -68,7 +71,7 @@ public class DrillableElement : MonoBehaviour
 
         _IsCollected = true;
 
-        RunManager.Instance.AjouterMinerai(_OreValue);
+        RunManager.Instance.AjouterMinerai(_MineralType, _OreValue);
     }
 
     public void CollecterParAimant(DrillController pDrill)
