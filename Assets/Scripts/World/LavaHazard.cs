@@ -7,6 +7,19 @@ public class LavaHazard : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D pOther)
     {
+        if (GameManager.Instance == null)
+        {
+            return;
+        }
+
+        DrillHead lDrillHead = pOther.GetComponent<DrillHead>();
+
+        if (lDrillHead != null)
+        {
+            GameManager.Instance.TerminerPartie();
+            return;
+        }
+
         if (pOther.isTrigger)
         {
             return;
@@ -14,7 +27,7 @@ public class LavaHazard : MonoBehaviour
 
         DrillController lDrill = pOther.GetComponentInParent<DrillController>();
 
-        if (lDrill == null || GameManager.Instance == null)
+        if (lDrill == null)
         {
             return;
         }
