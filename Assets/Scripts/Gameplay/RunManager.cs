@@ -46,8 +46,6 @@ public class RunManager : MonoBehaviour
 
     public int Gold => _Gold;
 
-    public int Ore => _Diamond;
-
     public int RunValue => (_Diamond * _DiamondValue) + (_Gold * _GoldValue);
 
     public float Energy => _Energy;
@@ -110,13 +108,6 @@ public class RunManager : MonoBehaviour
 
 
     #region [Minerai]
-
-    public void AjouterMinerai(int pQuantite)
-    {
-        _Diamond += pQuantite;
-
-        Debug.Log($"Diamant  : {_Diamond}");
-    }
 
     public void AjouterMinerai(MineralType pMineralType, int pQuantite)
     {

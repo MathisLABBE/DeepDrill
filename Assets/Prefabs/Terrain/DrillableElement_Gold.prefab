@@ -154,4 +154,4 @@ MonoBehaviour:
   _Type: 1
   _MineralType: 1
   _Resistance: 1
-  _OreValue: 1
+  _MineralQuantity: 2

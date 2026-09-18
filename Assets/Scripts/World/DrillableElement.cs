@@ -14,7 +14,7 @@ public class DrillableElement : MonoBehaviour
     private float _Resistance = 1f;
 
     [SerializeField]
-    private int _OreValue = 1;
+    private int _MineralQuantity = 1;
 
     private float _CurrentDrilling;
     private bool _IsCollected;
@@ -71,7 +71,7 @@ public class DrillableElement : MonoBehaviour
 
         _IsCollected = true;
 
-        RunManager.Instance.AjouterMinerai(_MineralType, _OreValue);
+        RunManager.Instance.AjouterMinerai(_MineralType, _MineralQuantity);
     }
 
     public void CollecterParAimant(DrillController pDrill)

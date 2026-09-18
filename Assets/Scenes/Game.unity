@@ -7906,7 +7906,7 @@ MonoBehaviour:
   _AudioSource: {fileID: 1799193601}
   _GameOverSound: {fileID: 8300000, guid: 8864aa1e02f30d542944244bbccb1a05, type: 3}
   _VibrationsEnabled: 1
-  _CoinsPerDiamond: 1
+  _CoinsPerRunValue: 1
 --- !u!114 &1799193599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8380,7 +8380,7 @@ MonoBehaviour:
   _RevivePanel: {fileID: 2059431942}
   _RewardPanel: {fileID: 1513288576}
   _DepthText: {fileID: 164120414}
-  _OreText: {fileID: 1068492554}
+  _RunValueText: {fileID: 1068492554}
   _CoinsEarnedText: {fileID: 742041352}
   _TotalCoinsText: {fileID: 1789059355}
   _ClaimButton: {fileID: 525998488}

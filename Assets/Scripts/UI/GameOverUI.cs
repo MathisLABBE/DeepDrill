@@ -20,7 +20,7 @@ public class GameOverUI : MonoBehaviour
     private TMP_Text _DepthText;
 
     [SerializeField]
-    private TMP_Text _OreText;
+    private TMP_Text _RunValueText;
 
     [SerializeField]
     private TMP_Text _CoinsEarnedText;
@@ -71,7 +71,7 @@ public class GameOverUI : MonoBehaviour
         _IsDisplayed = true;
 
         _DepthText.text = $"Profondeur : {RunManager.Instance.Depth} m";
-        _OreText.text = $"Valeur : {RunManager.Instance.RunValue}";
+        _RunValueText.text = $"Valeur : {RunManager.Instance.RunValue}";
 
         int lPiecesARecuperer = RunManager.Instance.RunValue * GameManager.Instance.CoinsPerRunValue;
 
