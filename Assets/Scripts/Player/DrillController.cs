@@ -26,6 +26,10 @@ public class DrillController : MonoBehaviour
     private float _MinTurnSpeedMultiplier = 0.35f;
 
     [SerializeField]
+    [Range(0.1f, 1f)]
+    private float _MinTerrainSpeedMultiplier = 0.25f;
+
+    [SerializeField]
     private float _RotationOffset = 90f;
 
     private Rigidbody2D _Rb;
@@ -168,11 +172,27 @@ public class DrillController : MonoBehaviour
             lMovementMultiplier = Mathf.Lerp(1f, _MinTurnSpeedMultiplier, lTurnRatio);
         }
 
+        float lTerrainSpeedMultiplier = 1f;
+
+        if (_DrillZone != null && _DrillZone.IsInTerrain)
+        {
+            float lResistance = _DrillZone.TerrainResistance;
+
+            lTerrainSpeedMultiplier = Mathf.Clamp(
+                _DrillPower / (_DrillPower + lResistance),
+                _MinTerrainSpeedMultiplier,
+                1f);
+        }
+
+        lMovementMultiplier *= lTerrainSpeedMultiplier;
+
         _Rb.AddForce(lMovementDirection * _MovementForce * lMovementMultiplier, ForceMode2D.Force);
 
-        if (_Rb.linearVelocity.sqrMagnitude > _MaxSpeed * _MaxSpeed)
+        float lMaxSpeed = _MaxSpeed * lTerrainSpeedMultiplier;
+
+        if (_Rb.linearVelocity.sqrMagnitude > lMaxSpeed * lMaxSpeed)
         {
-            _Rb.linearVelocity = _Rb.linearVelocity.normalized * _MaxSpeed;
+            _Rb.linearVelocity = _Rb.linearVelocity.normalized * lMaxSpeed;
         }
     }
 

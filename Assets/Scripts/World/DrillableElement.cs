@@ -22,6 +22,13 @@ public class DrillableElement : MonoBehaviour
     #endregion
 
 
+    #region [Propriétés]
+
+    public float Resistance => _Resistance;
+
+    #endregion
+
+
     #region [Forage]
 
     public void Forer(DrillController pDrill, float pDrillPower, float pDeltaTime)

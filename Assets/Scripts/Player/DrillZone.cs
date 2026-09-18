@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
@@ -6,14 +7,16 @@ public class DrillZone : MonoBehaviour
     #region [Champs]
 
     private DrillController _Drill;
-    private int _TerrainContactCount;
+    private readonly HashSet<DrillableElement> _TerrainContacts = new();
 
     #endregion
 
 
     #region [Propriétés]
 
-    public bool IsInTerrain => _TerrainContactCount > 0;
+    public bool IsInTerrain => ObtenirResistanceTerrain() > 0f;
+
+    public float TerrainResistance => ObtenirResistanceTerrain();
 
     #endregion
 
@@ -34,7 +37,7 @@ public class DrillZone : MonoBehaviour
             return;
         }
 
-        _TerrainContactCount++;
+        _TerrainContacts.Add(lElement);
     }
 
     private void OnTriggerStay2D(Collider2D pOther)
@@ -63,7 +66,29 @@ public class DrillZone : MonoBehaviour
             return;
         }
 
-        _TerrainContactCount = Mathf.Max(0, _TerrainContactCount - 1);
+        _TerrainContacts.Remove(lElement);
+    }
+
+    #endregion
+
+
+    #region [Terrain]
+
+    private float ObtenirResistanceTerrain()
+    {
+        float lResistance = 0f;
+
+        foreach (DrillableElement lElement in _TerrainContacts)
+        {
+            if (lElement == null)
+            {
+                continue;
+            }
+
+            lResistance = Mathf.Max(lResistance, lElement.Resistance);
+        }
+
+        return lResistance;
     }
 
     #endregion
