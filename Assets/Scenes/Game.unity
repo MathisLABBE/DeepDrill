@@ -629,7 +629,8 @@ MonoBehaviour:
   _MaxSpeed: 5
   _MovementDamping: 4
   _TargetStopDistance: 0.15
-  _RotationSpeed: 360
+  _RotationSpeed: 180
+  _MinTurnSpeedMultiplier: 0.25
   _RotationOffset: 90
   _BaseDrillPower: 1
   _DrillPowerPerLevel: 0.25
@@ -641,6 +642,7 @@ MonoBehaviour:
   _DrillSound: {fileID: 8300000, guid: 7a7629dfcfb5ea64ba32d40c8f671fb9, type: 3}
   _DiamondSound: {fileID: 8300000, guid: db98148ee64603f45bbc8c7d3dd08ee3, type: 3}
   _VibrationsEnabled: 1
+  _DrillZone: {fileID: 443880079}
 --- !u!61 &401091622
 BoxCollider2D:
   m_ObjectHideFlags: 0
