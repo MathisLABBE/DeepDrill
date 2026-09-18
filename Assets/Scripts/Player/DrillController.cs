@@ -69,6 +69,9 @@ public class DrillController : MonoBehaviour
     [SerializeField]
     private bool _VibrationsEnabled = true;
 
+    [SerializeField]
+    private DrillZone _DrillZone;
+
     #endregion
 
 
@@ -77,6 +80,12 @@ public class DrillController : MonoBehaviour
     private void Awake()
     {
         _Rb = GetComponent<Rigidbody2D>();
+
+        if (_DrillZone == null)
+        {
+            _DrillZone = GetComponentInChildren<DrillZone>();
+        }
+
         _Rb.linearDamping = _MovementDamping;
 
         _BaseScale = transform.localScale;
@@ -146,6 +155,7 @@ public class DrillController : MonoBehaviour
             Mathf.Cos(lForwardAngle),
             Mathf.Sin(lForwardAngle));
 
+        Vector2 lMovementDirection = lForwardDirection;
         float lMovementMultiplier = 1f;
 
         if (_HasTargetDirection)
@@ -158,7 +168,7 @@ public class DrillController : MonoBehaviour
             lMovementMultiplier = Mathf.Lerp(1f, _MinTurnSpeedMultiplier, lTurnRatio);
         }
 
-        _Rb.AddForce(lForwardDirection * _MovementForce * lMovementMultiplier, ForceMode2D.Force);
+        _Rb.AddForce(lMovementDirection * _MovementForce * lMovementMultiplier, ForceMode2D.Force);
 
         if (_Rb.linearVelocity.sqrMagnitude > _MaxSpeed * _MaxSpeed)
         {
