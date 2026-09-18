@@ -6,7 +6,6 @@ public class DrillZone : MonoBehaviour
 {
     #region [Champs]
 
-    private DrillController _Drill;
     private readonly HashSet<DrillableElement> _TerrainContacts = new();
 
     #endregion
@@ -22,11 +21,6 @@ public class DrillZone : MonoBehaviour
 
 
     #region [Méthodes Unity]
-
-    private void Awake()
-    {
-        _Drill = GetComponentInParent<DrillController>();
-    }
 
     private void OnTriggerEnter2D(Collider2D pOther)
     {

@@ -16,7 +16,6 @@ public class DrillableElement : MonoBehaviour
     [SerializeField]
     private int _MineralQuantity = 1;
 
-    private float _CurrentDrilling;
     private bool _IsCollected;
 
     #endregion
@@ -30,39 +29,6 @@ public class DrillableElement : MonoBehaviour
 
 
     #region [Forage]
-
-    public void Forer(DrillController pDrill, float pDrillPower, float pDeltaTime)
-    {
-        if (_Type == TerrainElementType.Indestructible)
-        {
-            return;
-        }
-
-        _CurrentDrilling += pDrillPower * pDeltaTime;
-
-        if (_CurrentDrilling < _Resistance)
-        {
-            return;
-        }
-
-        if (_Type == TerrainElementType.Ore)
-        {
-            CollecterMinerai();
-
-            if (pDrill != null)
-            {
-                pDrill.JouerSonDiamant();
-                pDrill.JouerVibrationDiamant();
-            }
-        }
-
-        if (pDrill != null)
-        {
-            pDrill.JouerEffetForage();
-        }
-
-        Destroy(gameObject);
-    }
 
     public void DetruireParForageContinu(DrillController pDrill)
     {

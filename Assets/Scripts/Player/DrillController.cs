@@ -366,19 +366,4 @@ public class DrillController : MonoBehaviour
     }
 
     #endregion
-
-
-    #region [Forage]
-
-    public void ForerElement(DrillableElement pElement, float pDeltaTime)
-    {
-        if (pElement == null)
-        {
-            return;
-        }
-
-        pElement.Forer(this, _DrillPower, pDeltaTime);
-    }
-
-    #endregion
 }
