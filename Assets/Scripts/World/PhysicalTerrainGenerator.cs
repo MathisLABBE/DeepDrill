@@ -44,8 +44,22 @@ public class PhysicalTerrainGenerator : MonoBehaviour
     private float _IndestructibleChance = 0.05f;
 
     [SerializeField]
+    private float _LavaPocketScale = 0.12f;
+
+    [SerializeField]
     [Range(0f, 1f)]
-    private float _LavaChance = 0.02f;
+    private float _LavaPocketThreshold = 0.78f;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float _LavaFillRatio = 0.5f;
+
+    [SerializeField]
+    [Min(1)]
+    private int _LavaPocketVerticalSearch = 20;
+
+    private float _LavaNoiseOffsetX;
+    private float _LavaNoiseOffsetY;
 
     [SerializeField]
     private Transform _Drill;
@@ -86,6 +100,9 @@ public class PhysicalTerrainGenerator : MonoBehaviour
 
         _GoldNoiseOffsetX = Random.Range(-10000f, 10000f);
         _GoldNoiseOffsetY = Random.Range(-10000f, 10000f);
+
+        _LavaNoiseOffsetX = Random.Range(-10000f, 10000f);
+        _LavaNoiseOffsetY = Random.Range(-10000f, 10000f);
 
         _NextRowY = _StartY;
 
@@ -164,20 +181,20 @@ public class PhysicalTerrainGenerator : MonoBehaviour
 
     private TerrainElementType ChoisirTypeElement(Vector3 pPosition)
     {
-        float lRandom = Random.value;
+        float lGridX = pPosition.x / _ElementSize;
+        float lGridY = pPosition.y / _ElementSize;
 
-        if (_LavaPrefab != null && lRandom < _LavaChance)
+        float lLavaNoise = CalculerBruitPocheLave(pPosition);
+
+        if (_LavaPrefab != null && lLavaNoise >= _LavaPocketThreshold)
         {
-            return TerrainElementType.Lava;
+            return ChoisirTypePocheLave(pPosition);
         }
 
-        if (_IndestructibleElementPrefab != null && lRandom < _LavaChance + _IndestructibleChance)
+        if (_IndestructibleElementPrefab != null && Random.value < _IndestructibleChance)
         {
             return TerrainElementType.Indestructible;
         }
-
-        float lGridX = pPosition.x / _ElementSize;
-        float lGridY = pPosition.y / _ElementSize;
 
         float lDiamondNoise = Mathf.PerlinNoise(
             (lGridX * _DiamondVeinScale) + _DiamondNoiseOffsetX,
@@ -211,6 +228,9 @@ public class PhysicalTerrainGenerator : MonoBehaviour
             case TerrainElementType.Lava:
                 return _LavaPrefab;
 
+            case TerrainElementType.Empty:
+                return null;
+
             default:
                 return _NormalElementPrefab;
         }
@@ -231,6 +251,58 @@ public class PhysicalTerrainGenerator : MonoBehaviour
         }
 
         return _DiamondElementPrefab;
+    }
+
+    private float CalculerBruitPocheLave(Vector3 pPosition)
+    {
+        float lGridX = pPosition.x / _ElementSize;
+        float lGridY = pPosition.y / _ElementSize;
+
+        return Mathf.PerlinNoise(
+            (lGridX * _LavaPocketScale) + _LavaNoiseOffsetX,
+            (lGridY * _LavaPocketScale) + _LavaNoiseOffsetY);
+    }
+
+    private TerrainElementType ChoisirTypePocheLave(Vector3 pPosition)
+    {
+        int lTopSteps = 0;
+        int lBottomSteps = 0;
+
+        for (int lStep = 1; lStep <= _LavaPocketVerticalSearch; lStep++)
+        {
+            Vector3 lPosition = pPosition + (Vector3.up * (_ElementSize * lStep));
+
+            if (CalculerBruitPocheLave(lPosition) < _LavaPocketThreshold)
+            {
+                break;
+            }
+
+            lTopSteps = lStep;
+        }
+
+        for (int lStep = 1; lStep <= _LavaPocketVerticalSearch; lStep++)
+        {
+            Vector3 lPosition = pPosition + (Vector3.down * (_ElementSize * lStep));
+
+            if (CalculerBruitPocheLave(lPosition) < _LavaPocketThreshold)
+            {
+                break;
+            }
+
+            lBottomSteps = lStep;
+        }
+
+        float lTopY = pPosition.y + (lTopSteps * _ElementSize);
+        float lBottomY = pPosition.y - (lBottomSteps * _ElementSize);
+
+        float lLavaSurfaceY = Mathf.Lerp(lBottomY, lTopY, Mathf.Clamp01(_LavaFillRatio));
+
+        if (pPosition.y <= lLavaSurfaceY)
+        {
+            return TerrainElementType.Lava;
+        }
+
+        return TerrainElementType.Empty;
     }
 
     #endregion
