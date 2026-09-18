@@ -19,6 +19,12 @@ public class RunManager : MonoBehaviour
     [SerializeField]
     private float _ReviveEnergyRatio = 0.5f;
 
+    [SerializeField]
+    private int _DiamondValue = 1;
+
+    [SerializeField]
+    private int _GoldValue = 2;
+
     private float _StartY;
     private float _Depth;
     private int _Diamond;
@@ -41,6 +47,8 @@ public class RunManager : MonoBehaviour
     public int Gold => _Gold;
 
     public int Ore => _Diamond;
+
+    public int RunValue => (_Diamond * _DiamondValue) + (_Gold * _GoldValue);
 
     public float Energy => _Energy;
 

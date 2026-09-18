@@ -10,7 +10,7 @@ public class GameUI : MonoBehaviour
     private TMP_Text _DepthText;
 
     [SerializeField]
-    private TMP_Text _OreText;
+    private TMP_Text _RunValueText;
 
     [SerializeField]
     private Image _EnergyBarFill;
@@ -28,7 +28,7 @@ public class GameUI : MonoBehaviour
         }
 
         AfficherProfondeur();
-        AfficherMinerai();
+        AfficherValeurPartie();
         AfficherEnergie();
     }
 
@@ -42,9 +42,9 @@ public class GameUI : MonoBehaviour
         _DepthText.text = $"{RunManager.Instance.Depth} m";
     }
 
-    private void AfficherMinerai()
+    private void AfficherValeurPartie()
     {
-        _OreText.text = $"Diamant : {RunManager.Instance.Ore}";
+        _RunValueText.text = $"Valeur : {RunManager.Instance.RunValue}";
     }
 
     private void AfficherEnergie()

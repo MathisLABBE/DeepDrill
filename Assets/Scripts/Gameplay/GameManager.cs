@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     [Min(1)]
-    private int _CoinsPerDiamond = 1;
+    private int _CoinsPerRunValue = 1;
 
     #endregion
 
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     public bool IsInvulnerable => Time.time < _InvulnerableUntil;
 
-    public int CoinsPerDiamond => Mathf.Max(1, _CoinsPerDiamond);
+    public int CoinsPerRunValue => Mathf.Max(1, _CoinsPerRunValue);
 
     #endregion
 
@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
         }
 
         int lMultiplicateur = Mathf.Max(1, pMultiplicateur);
-        int lPiecesGagnees = RunManager.Instance.Ore * CoinsPerDiamond * lMultiplicateur;
+        int lPiecesGagnees = RunManager.Instance.RunValue * CoinsPerRunValue * lMultiplicateur;
 
         SaveManager.Instance.AjouterPieces(lPiecesGagnees);
 

@@ -71,9 +71,9 @@ public class GameOverUI : MonoBehaviour
         _IsDisplayed = true;
 
         _DepthText.text = $"Profondeur : {RunManager.Instance.Depth} m";
-        _OreText.text = $"Diamant : {RunManager.Instance.Ore}";
+        _OreText.text = $"Valeur : {RunManager.Instance.RunValue}";
 
-        int lPiecesARecuperer = RunManager.Instance.Ore * GameManager.Instance.CoinsPerDiamond;
+        int lPiecesARecuperer = RunManager.Instance.RunValue * GameManager.Instance.CoinsPerRunValue;
 
         _CoinsEarnedText.text = $"Pièces à récupérer : {lPiecesARecuperer}";
         _TotalCoinsText.text = $"Total pièces : {SaveManager.Instance.Coins}";
