@@ -22,6 +22,10 @@ public class DrillController : MonoBehaviour
     private float _RotationSpeed = 360f;
 
     [SerializeField]
+    [Range(0.1f, 1f)]
+    private float _MinTurnSpeedMultiplier = 0.35f;
+
+    [SerializeField]
     private float _RotationOffset = 90f;
 
     private Rigidbody2D _Rb;
@@ -142,7 +146,19 @@ public class DrillController : MonoBehaviour
             Mathf.Cos(lForwardAngle),
             Mathf.Sin(lForwardAngle));
 
-        _Rb.AddForce(lForwardDirection * _MovementForce, ForceMode2D.Force);
+        float lMovementMultiplier = 1f;
+
+        if (_HasTargetDirection)
+        {
+            float lTargetAngle = Mathf.Atan2(_TargetDirection.y, _TargetDirection.x) * Mathf.Rad2Deg + _RotationOffset;
+            float lAngleDifference = Mathf.Abs(Mathf.DeltaAngle(lRotation, lTargetAngle));
+
+            float lTurnRatio = Mathf.Clamp01(lAngleDifference / 90f);
+
+            lMovementMultiplier = Mathf.Lerp(1f, _MinTurnSpeedMultiplier, lTurnRatio);
+        }
+
+        _Rb.AddForce(lForwardDirection * _MovementForce * lMovementMultiplier, ForceMode2D.Force);
 
         if (_Rb.linearVelocity.sqrMagnitude > _MaxSpeed * _MaxSpeed)
         {
