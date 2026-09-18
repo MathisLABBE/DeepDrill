@@ -25,8 +25,8 @@ public class DrillController : MonoBehaviour
     private float _RotationOffset = 90f;
 
     private Rigidbody2D _Rb;
-    private Vector2 _MovementDirection;
-    private bool _HasMovementInput;
+    private Vector2 _TargetDirection;
+    private bool _HasTargetDirection;
 
     [SerializeField]
     private float _BaseDrillPower = 1f;
@@ -106,8 +106,7 @@ public class DrillController : MonoBehaviour
             return;
         }
 
-        _MovementDirection = Vector2.zero;
-        _HasMovementInput = false;
+        _HasTargetDirection = false;
 
         LireSouris();
         LireClavier();
@@ -123,15 +122,27 @@ public class DrillController : MonoBehaviour
             return;
         }
 
-        if (_HasMovementInput)
+        float lRotation = _Rb.rotation;
+
+        if (_HasTargetDirection)
         {
-            _Rb.AddForce(_MovementDirection * _MovementForce, ForceMode2D.Force);
+            float lAngleCible = Mathf.Atan2(_TargetDirection.y, _TargetDirection.x) * Mathf.Rad2Deg + _RotationOffset;
 
-            float lAngleCible = Mathf.Atan2(_MovementDirection.y, _MovementDirection.x) * Mathf.Rad2Deg + _RotationOffset;
-            float lNouvelAngle = Mathf.MoveTowardsAngle(_Rb.rotation, lAngleCible, _RotationSpeed * Time.fixedDeltaTime);
+            lRotation = Mathf.MoveTowardsAngle(
+                lRotation,
+                lAngleCible,
+                _RotationSpeed * Time.fixedDeltaTime);
 
-            _Rb.MoveRotation(lNouvelAngle);
+            _Rb.MoveRotation(lRotation);
         }
+
+        float lForwardAngle = (lRotation - _RotationOffset) * Mathf.Deg2Rad;
+
+        Vector2 lForwardDirection = new Vector2(
+            Mathf.Cos(lForwardAngle),
+            Mathf.Sin(lForwardAngle));
+
+        _Rb.AddForce(lForwardDirection * _MovementForce, ForceMode2D.Force);
 
         if (_Rb.linearVelocity.sqrMagnitude > _MaxSpeed * _MaxSpeed)
         {
@@ -196,8 +207,8 @@ public class DrillController : MonoBehaviour
             return;
         }
 
-        _MovementDirection = lDirection.normalized;
-        _HasMovementInput = true;
+        _TargetDirection = lDirection.normalized;
+        _HasTargetDirection = true;
     }
 
     private void LireTactile()
@@ -230,8 +241,8 @@ public class DrillController : MonoBehaviour
             return;
         }
 
-        _MovementDirection = lDirection.normalized;
-        _HasMovementInput = true;
+        _TargetDirection = lDirection.normalized;
+        _HasTargetDirection = true;
     }
 
     #endregion
