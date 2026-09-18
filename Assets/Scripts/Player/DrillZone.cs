@@ -40,23 +40,6 @@ public class DrillZone : MonoBehaviour
         _TerrainContacts.Add(lElement);
     }
 
-    private void OnTriggerStay2D(Collider2D pOther)
-    {
-        if (_Drill == null)
-        {
-            return;
-        }
-
-        DrillableElement lElement = pOther.GetComponent<DrillableElement>();
-
-        if (lElement == null)
-        {
-            return;
-        }
-
-        _Drill.ForerElement(lElement, Time.fixedDeltaTime);
-    }
-
     private void OnTriggerExit2D(Collider2D pOther)
     {
         DrillableElement lElement = pOther.GetComponent<DrillableElement>();

@@ -64,6 +64,32 @@ public class DrillableElement : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void DetruireParForageContinu(DrillController pDrill)
+    {
+        if (_Type == TerrainElementType.Indestructible)
+        {
+            return;
+        }
+
+        if (_Type == TerrainElementType.Ore)
+        {
+            CollecterMinerai();
+
+            if (pDrill != null)
+            {
+                pDrill.JouerSonDiamant();
+                pDrill.JouerVibrationDiamant();
+            }
+        }
+
+        if (pDrill != null)
+        {
+            pDrill.JouerEffetForage();
+        }
+
+        Destroy(gameObject);
+    }
+
     #endregion
 
 
