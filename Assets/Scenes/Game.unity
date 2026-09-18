@@ -7653,11 +7653,14 @@ MonoBehaviour:
   _GoldVeinScale: 0.16
   _GoldVeinThreshold: 0.78
   _IndestructibleChance: 0
-  _LavaChance: 0.02
+  _LavaPocketScale: 0.12
+  _LavaPocketThreshold: 0.78
+  _LavaFillRatio: 0.5
+  _LavaPocketVerticalSearch: 20
   _Drill: {fileID: 401091620}
   _TerrainWidth: 6
   _GenerationDepth: 10
-  _ElementSize: 0.15
+  _ElementSize: 0.2
   _ReferenceElementSize: 0.25
   _StartY: -2
   _CleanupDistance: 8
