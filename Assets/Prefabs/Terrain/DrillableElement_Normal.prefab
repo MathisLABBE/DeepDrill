@@ -153,5 +153,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DrillableElement
   _Type: 0
   _MineralType: 0
-  _Resistance: 1
+  _Resistance: 50
   _MineralQuantity: 1
