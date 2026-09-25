@@ -76,6 +76,9 @@ public class DrillController : MonoBehaviour
     [SerializeField]
     private DrillZone _DrillZone;
 
+    [SerializeField]
+    private TerrainProbe _TerrainProbe;
+
     #endregion
 
 
@@ -84,6 +87,11 @@ public class DrillController : MonoBehaviour
     private void Awake()
     {
         _Rb = GetComponent<Rigidbody2D>();
+
+        if (_TerrainProbe == null)
+        {
+            _TerrainProbe = GetComponentInChildren<TerrainProbe>();
+        }
 
         if (_DrillZone == null)
         {
@@ -174,9 +182,9 @@ public class DrillController : MonoBehaviour
 
         float lTerrainSpeedMultiplier = 1f;
 
-        if (_DrillZone != null && _DrillZone.IsInTerrain)
+        if (_TerrainProbe != null && _TerrainProbe.IsInTerrain)
         {
-            float lResistance = _DrillZone.TerrainResistance;
+            float lResistance = _TerrainProbe.TerrainResistance;
 
             lTerrainSpeedMultiplier = Mathf.Clamp(
                 _DrillPower / (_DrillPower + lResistance),
