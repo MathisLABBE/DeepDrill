@@ -14,7 +14,10 @@ public class TunnelMaskSpawner : MonoBehaviour
     [Min(0.01f)]
     private float _MaskSpacing = 0.1f;
 
-    private DrillZone _DrillZone;
+    [SerializeField]
+    private TunnelMaskManager _TunnelMaskManager;
+
+    private TerrainProbe _TerrainProbe;
     private Vector3 _LastMaskPosition;
     private bool _HasLastMaskPosition;
 
@@ -25,12 +28,17 @@ public class TunnelMaskSpawner : MonoBehaviour
 
     private void Awake()
     {
-        _DrillZone = GetComponentInParent<DrillController>()?.GetComponentInChildren<DrillZone>();
+        _TerrainProbe = GetComponentInChildren<TerrainProbe>();
+
+        if (_TunnelMaskManager == null)
+        {
+            _TunnelMaskManager = FindFirstObjectByType<TunnelMaskManager>();
+        }
     }
 
     private void Update()
     {
-        if (_DrillZone == null || !_DrillZone.IsInTerrain)
+        if (_TerrainProbe == null || !_TerrainProbe.IsInTerrain)
         {
             _HasLastMaskPosition = false;
             return;
@@ -64,11 +72,29 @@ public class TunnelMaskSpawner : MonoBehaviour
             return;
         }
 
-        Instantiate(
+        GameObject lMask = Instantiate(
             _TunnelMaskPrefab,
             transform.position,
             Quaternion.identity,
             _TunnelMasksParent);
+
+        if (_TunnelMaskManager != null)
+        {
+            SpriteMask lSpriteMask = lMask.GetComponent<SpriteMask>();
+
+            if (lSpriteMask != null && lSpriteMask.sprite != null)
+            {
+                float lScale = Mathf.Max(
+                    Mathf.Abs(lMask.transform.lossyScale.x),
+                    Mathf.Abs(lMask.transform.lossyScale.y));
+
+                float lRadius = lSpriteMask.sprite.bounds.extents.x * lScale;
+
+                _TunnelMaskManager.EnregistrerMasque(
+                    lMask.transform.position,
+                    lRadius);
+            }
+        }
 
         _LastMaskPosition = transform.position;
         _HasLastMaskPosition = true;
